@@ -74,6 +74,8 @@ In the Render Dashboard, go to your service → **Environment** → add the foll
 | `SENDGRID_API_KEY` | *(your key)* | For email notifications via SendGrid |
 | `DEFAULT_FROM_EMAIL` | `noreply@yourdomain.com` | Sender address for emails |
 
+> ⚠️ **Notice for Free Tier Users:** Render's free web services block all outbound traffic to SMTP ports (25, 587, 465). If you are using the free tier, email notifications via `EMAIL_HOST` or `SENDGRID_API_KEY` (using SMTP) will not work. You must upgrade to a paid Render plan to send emails. See [Render's Changelog](https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports) for details.
+
 ---
 
 ### Step 4: Deploy
