@@ -19,8 +19,8 @@
     "cp-jquery": "cpx node_modules/jquery/dist/jquery.js tabbycat/static/js/vendor",
     "cp-validate": "cpx node_modules/jquery-validation/dist/jquery.validate.js tabbycat/static/js/vendor",
     "render-serve": "npm-run-all -p render-*",
-    "render-server": "python tabbycat/run-asgi.py",
-    "render-worker": "python manage.py runworker notifications adjallocation venues",
+    "render-server": "cd tabbycat && python run-asgi.py",
+    "render-worker": "cd tabbycat && python ../manage.py runworker notifications adjallocation venues",
     "docs": "sphinx-autobuild docs docs/_build/html --port 7999",
     "lint": "pre-commit run --all-files"
   },

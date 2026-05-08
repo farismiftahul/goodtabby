@@ -1,10 +1,9 @@
 services:
   - type: web
     name: tabbycat_website
-    runtime: python
+    runtime: docker
     region: oregon
-    buildCommand: "./bin/render-compile.sh"
-    startCommand: "npm run render-serve"
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: DATABASE_URL
         sync: false  # Set your Supabase PostgreSQL connection string in the Render dashboard
@@ -20,22 +19,12 @@ services:
           property: port
       - key: DJANGO_SECRET_KEY
         generateValue: true
-      - key: PYTHON_VERSION
-        value: "3.12.3"
-      - key: NODE_VERSION
-        value: "18.20.3"
       - key: WEB_CONCURRENCY
         value: 4
       - key: TAB_DIRECTOR_EMAIL
         sync: false
       - key: TIME_ZONE
         sync: false
-      - key: ON_RENDER
-        value: true
-      - key: USING_NGINX
-        value: 0  # Not 'false'; is cast
-      - key: IN_DOCKER
-        value: 0  # Override Dockerfile's ENV IN_DOCKER 1; ensures render.py loads
 
   - type: redis
     name: tabbycat_redis
