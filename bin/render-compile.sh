@@ -5,6 +5,9 @@
 
 set -o errexit
 
+# Ensure Render settings are loaded during build
+export ON_RENDER=1
+
 echo "-----> Installing Python dependencies"
 python -m pip install --upgrade pip
 python -m pip install pipenv
