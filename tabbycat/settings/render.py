@@ -116,9 +116,11 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 # Email
 # ==============================================================================
 
-if os.environ.get('EMAIL_HOST', ''):
-    SERVER_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+if os.environ.get('DEFAULT_FROM_EMAIL', ''):
     DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+    SERVER_EMAIL = os.environ.get('SERVER_EMAIL', DEFAULT_FROM_EMAIL)
+
+if os.environ.get('EMAIL_HOST', ''):
     EMAIL_HOST = os.environ['EMAIL_HOST']
     EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
@@ -126,8 +128,9 @@ if os.environ.get('EMAIL_HOST', ''):
     EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'true').lower() == 'true'
 
 elif os.environ.get('SENDGRID_API_KEY', ''):
-    SERVER_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'root@localhost')
-    DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'notconfigured@tabbycatsite')
+    if not os.environ.get('DEFAULT_FROM_EMAIL', ''):
+        SERVER_EMAIL = 'root@localhost'
+        DEFAULT_FROM_EMAIL = 'notconfigured@tabbycatsite'
     EMAIL_HOST = 'smtp.sendgrid.net'
     EMAIL_HOST_USER = 'apikey'
     EMAIL_HOST_PASSWORD = os.environ['SENDGRID_API_KEY']
