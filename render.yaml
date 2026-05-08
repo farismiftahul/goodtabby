@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: tabbycat_website
+    runtime: python
+    region: oregon
+    buildCommand: "./bin/render-compile.sh"
+    startCommand: "npm run render-serve"
+    envVars:
+      - key: DATABASE_URL
+        sync: false  # Set your Supabase PostgreSQL connection string in the Render dashboard
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: tabbycat_redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: tabbycat_redis
+          property: port
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+      - key: NODE_VERSION
+        value: "18.20.3"
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: TAB_DIRECTOR_EMAIL
+        sync: false
+      - key: TIME_ZONE
+        sync: false
+      - key: ON_RENDER
+        value: true
+      - key: USING_NGINX
+        value: 0  # Not 'false'; is cast
+
+  - type: redis
+    name: tabbycat_redis
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+    maxmemoryPolicy: allkeys-lru

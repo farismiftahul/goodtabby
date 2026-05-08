@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load debate_tags %}
+
+{% block content %}
+
+  <div id="vueMount">
+    <check-in-status-container :initial-events="events"
+                               :tournament-slug="tournamentSlug"
+                               :adjudicators="adjudicators"
+                               :speakers="speakers"
+                               :venues="venues"
+                               :team-codes="teamCodes"
+                               :for-admin="forAdmin">
+    </check-in-status-container>
+  </div>
+
+{% endblock content %}
+
+{% block js %}
+  <script>
+    window.vueData = {
+      'events': {{ events|safe }},
+      'tournamentSlug': '{{ tournament_slug }}',
+      'adjudicators': {% if adjudicators %}{{ adjudicators|safe }}{% else %}null{% endif %},
+      'speakers': {% if speakers %}{{ speakers|safe }}{% else %}null{% endif %},
+      'venues': {% if venues %}{{ venues|safe }}{% else %}null{% endif %},
+      'teamCodes': {{ team_codes }},
+      'forAdmin': {% if for_admin %}true{% else %}false{% endif %},
+    }
+  </script>
+  {{ block.super }}
+{% endblock js %}
