@@ -1,69 +1,179 @@
-<div align="center">
+# Tabbycat — Debate Tournament Tabulation
 
-<img width=200 src="https://raw.githubusercontent.com/TabbycatDebate/tabbycat/develop/tabbycat/static/logo.svg?sanitize=true">
+Tabbycat is a debate tournament tabulation system for two-team parliamentary formats. It supports features like automated draw generation, adjudicator allocation, real-time ballot entry, and live participant feedback.
 
-# Tabbycat
+- **Original Project**: [TabbycatDebate/tabbycat](https://github.com/TabbycatDebate/tabbycat)
+- **Documentation**: [tabbycat.readthedocs.io](https://tabbycat.readthedocs.io/)
 
-[![Release](https://img.shields.io/github/release/tabbycatdebate/tabbycat.svg)](https://github.com/tabbycatdebate/tabbycat/releases)
-[![Crowdin](https://badges.crowdin.net/tabbycat/localized.svg)](https://crowdin.com/project/tabbycat)
-[![Docs](https://readthedocs.org/projects/tabbycat/badge/)](http://tabbycat.readthedocs.io/en/stable/)
-![Build Status](https://github.com/TabbycatDebate/tabbycat/workflows/Django%20CI/badge.svg)
-[![Maintainability](https://api.codeclimate.com/v1/badges/33dc219dfb957ad658c2/maintainability)](https://codeclimate.com/github/TabbycatDebate/tabbycat/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/33dc219dfb957ad658c2/test_coverage)](https://codeclimate.com/github/TabbycatDebate/tabbycat/test_coverage)
+---
 
-</div>
+## Deploy to Render
 
-Tabbycat is a draw tabulation system for British Parliamentary and a variety of two-team formats. It was used at Australs 2010 and 2012–2019, EUDC 2018, WUDC 2019–2022 and many other tournaments of all sizes and formats. To see an example of a post-tournament website, have a look at the [WUDC 2022 tab website](https://wudc2022.calicotab.com/wudc/).
+This guide walks you through deploying Tabbycat on [Render](https://render.com) with a [Supabase](https://supabase.com) PostgreSQL database.
 
-**Want to try it out?** The best way to trial Tabbycat is just to launch a new site, as described [below](#%EF%B8%8F-installation)). It takes just a few clicks, requires no technical background, and you can always deploy a fresh copy when you're ready to run your tournament.
+### Prerequisites
 
-## 🔍 Features
+- A [Render](https://dashboard.render.com/register) account
+- A [Supabase](https://supabase.com) account with a project created
+- This repository pushed to GitHub/GitLab
 
-- A range of setup options. Tabbycat powers Calico, a paid service for hosting tournaments. Tabbycat can also run as a local installation (natively, or via Docker) and be deployed to the free-tiers of the Render or Heroku platforms.
-- Enter data from multiple computers simultaneously and (optionally) display results, draws, and other information online
-- Collect ballots and feedback online, or from printed forms customised for each round ( adjudicator feedback questions and rankings [are configurable](http://tabbycat.readthedocs.io/en/stable/features/adjudicator-feedback.html))
-- Automated adjudicator allocations based on adjudicator ranking, debate priority, and conflicts/clashes
-- A drag and drop interface for adjudicator allocation that displays conflicts alongside break liveness and gender/regional/language balance considerations
-- A responsive interface that adapts to suit large screens, laptops, tablets, and phones
-- Support for British Parliamentary (EUDC/WUDC), Australs, NZ Easters, Australian Easters, Joynt Scroll, UADC, and WSDC rule sets as well as configurable [draw generation rules](http://tabbycat.readthedocs.io/en/stable/features/draw-generation.html) and [team standings rules](http://tabbycat.readthedocs.io/en/stable/features/standings-rules.html)
+---
 
-## 📖 Documentation
+### Step 1: Get Your Supabase Database URL
 
-Our user guide is at [tabbycat.readthedocs.io](http://tabbycat.readthedocs.io/).
+1. Go to your **Supabase Dashboard** → select your project
+2. Navigate to **Settings** → **Database**
+3. Under **Connection string**, select **URI** and copy the **Transaction** pooler string (port `6543`)
 
-## ⬆️ Installation
+It will look like this:
 
-Tabbycat can be used in a number of ways.
+```
+postgresql://postgres.[your-ref]:[your-password]@aws-0-[region].pooler.supabase.com:6543/postgres
+```
 
-[Calico](https://calicotab.com/) is a managed hosting service run by one of Tabbycat's developers. For a flat fee, it will host tab websites, automatically manage their setup and performance, and provide ongoing access to the released tab. Click this button to deploy to Calico:
+> **Note:** If your password contains special characters (like `#`, `@`, `%`), they must be URL-encoded in the connection string. For example, `#` becomes `%23`.
 
-[![Deploy](https://raw.githubusercontent.com/gist/tienne-B/fc04ecd3c11a38424b642b4bba60e8d9/raw/b2c71d7d6a0d368d3e9dfd8002af729d155ad09b/calicodeploy.svg)](https://calicotab.com/tournaments/new/)
+---
 
-If you do not want to use Calico, you will need to setup and manage your own copy of Tabbycat:
+### Step 2: Create a Render Web Service
 
-1. For tournaments that require online access, you can [install and run Tabbycat from Heroku](https://tabbycat.readthedocs.io/en/stable/install/heroku.html). However, this will cost a small amount of money _unless_ you are a student and have registered for free Heroku hosting credits
-2. For tournaments where online access is unnecessary, you can [install and run Tabbycat from your own computer](https://tabbycat.readthedocs.io/en/stable/install/local.html)
+1. Go to [Render Dashboard](https://dashboard.render.com) → **New** → **Web Service**
+2. Connect your GitHub/GitLab repository
+3. Configure the service with these settings:
 
-## 💪 Support and Contributing
+| Setting | Value |
+|---------|-------|
+| **Name** | `tabbycat` (or your preferred name) |
+| **Runtime** | **Python** |
+| **Build Command** | `./bin/render-compile.sh` |
+| **Start Command** | `npm run render-serve` |
 
-If you have any feedback or would like to request support, we'd love to hear from you! There are a number of ways to get in touch, all [outlined in our documentation](http://tabbycat.readthedocs.io/en/latest/about/support.html).
+> ⚠️ **Important:** Make sure the Runtime is set to **Python**, not Docker. The repository contains a Dockerfile for local development, but Render should use the native Python runtime.
 
-Contributions are welcome, and are greatly appreciated! Details about how to contribute [are also outlined in our documentation](http://tabbycat.readthedocs.io/en/latest/about/contributing.html).
+---
 
-Monetary donations are much appreciated and help us to continue the development and maintenance of Tabbycat. We suggest that tournaments donate at the level of C$1 (1 Canadian dollar) per team; especially if your tournament is run for profit or fundraising purposes. More details [are available in our documentation](http://tabbycat.readthedocs.io/en/latest/about/licence.html).
+### Step 3: Set Environment Variables
 
-## ©️ Licence
+In the Render Dashboard, go to your service → **Environment** → add the following variables:
 
-Tabbycat is licensed under the terms of the [GNU Affero General Public License v3.0](https://choosealicense.com/licenses/agpl-3.0/). You may copy, distribute, and modify this software; however note that this licence requires (amongst other provisions) that any modifications you make to Tabbycat be made public.
+#### Required Variables
 
-If you wish to modify Tabbycat in a proprietary fashion we (the developers) are open to negotiating a dual licence for this purpose. Please [contact us](http://tabbycat.readthedocs.io/en/latest/authors.html#authors) if this is the case for you.
+| Key | Value | Description |
+|-----|-------|-------------|
+| `ON_RENDER` | `true` | Activates Render-specific Django settings |
+| `DJANGO_SECRET_KEY` | *(click Generate or use a random string)* | Cryptographic signing key for Django |
+| `DATABASE_URL` | `postgresql://postgres.[ref]:[pass]@...pooler.supabase.com:6543/postgres` | Your Supabase connection string from Step 1 |
 
-## ✏️ Authors
+#### Optional Variables
 
-Tabbycat was authored by Qi-Shan Lim for Auckland Australs in 2010. The current active developers are:
+| Key | Value | Description |
+|-----|-------|-------------|
+| `TAB_DIRECTOR_EMAIL` | `your@email.com` | Tournament director contact email |
+| `TIME_ZONE` | `Asia/Dhaka` | IANA timezone for the tournament ([list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)) |
+| `DISABLE_SENTRY` | `1` | Set to `1` to disable error tracking to Sentry |
+| `SENDGRID_API_KEY` | *(your key)* | For email notifications via SendGrid |
+| `DEFAULT_FROM_EMAIL` | `noreply@yourdomain.com` | Sender address for emails |
 
-- Philip Belesky
-- Chuan-Zheng Lee
-- Étienne Beaulé
+---
 
-Please don't hesitate to contact us ([e-mail](mailto:contact@tabbycat-debate.org)) with any questions, suggestions, or generally anything relating to Tabbycat.
+### Step 4: Deploy
+
+1. Click **Manual Deploy** → **Clear build cache & deploy**
+2. Wait for the build to complete (first build takes ~5-10 minutes)
+3. Once you see `Build successful 🎉`, wait for the deploy step
+4. Your app will be live at `https://your-service-name.onrender.com`
+
+---
+
+### Step 5: Create an Admin Account
+
+After deployment, you'll need to create a superuser to access the admin panel:
+
+1. Go to your service in the Render Dashboard
+2. Click **Shell** (in the sidebar)
+3. Run:
+
+```bash
+cd tabbycat
+python manage.py createsuperuser
+```
+
+4. Follow the prompts to set up your admin username, email, and password
+5. Access the admin panel at `https://your-service-name.onrender.com/admin/`
+
+---
+
+### Optional: Add Redis (for Real-Time Features)
+
+Tabbycat uses Redis for WebSocket channels (live updates) and caching. Without Redis, the app falls back to in-memory alternatives (works fine for small tournaments).
+
+To add Redis:
+
+1. Go to Render Dashboard → **New** → **Redis**
+2. Create a Redis instance (name it `tabbycat-redis`)
+3. Add these environment variables to your web service:
+
+| Key | Value |
+|-----|-------|
+| `REDIS_HOST` | *(internal host from your Redis instance)* |
+| `REDIS_PORT` | *(port from your Redis instance)* |
+
+---
+
+## Troubleshooting
+
+### Build fails with `No such file: local.py`
+
+The `ON_RENDER` environment variable is not set. Add `ON_RENDER = true` in your Render service's Environment settings.
+
+### `Application exited early` or port timeout
+
+- Make sure the Runtime is set to **Python** (not Docker)
+- Check that the Start Command is `npm run render-serve`
+
+### Database connection errors
+
+- Verify your `DATABASE_URL` is correct and uses the **Transaction pooler** (port `6543`) from Supabase
+- Make sure special characters in the password are URL-encoded (`#` → `%23`, `@` → `%40`)
+
+### `SPLIT_SETTINGS: imported docker.py` in logs
+
+Render is using Docker instead of Python runtime. Go to Settings → change Runtime to **Python**.
+
+---
+
+## Local Development
+
+For local development, see the [Tabbycat documentation](https://tabbycat.readthedocs.io/en/stable/install/local.html).
+
+### Quick Start (Docker)
+
+```bash
+docker-compose up
+```
+
+### Quick Start (Manual)
+
+```bash
+# Install Python dependencies
+pip install pipenv
+pipenv install
+
+# Install Node.js dependencies
+npm install
+
+# Build frontend
+npm run build
+
+# Run the development server
+cd tabbycat
+python manage.py migrate
+python manage.py createsuperuser
+npm run serve  # from project root
+```
+
+---
+
+## License
+
+Tabbycat is licensed under the [GNU Affero General Public License v3.0](LICENSE.md).
