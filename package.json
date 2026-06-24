@@ -65,7 +65,7 @@
     "@vue/eslint-config-standard": "^9.0.1",
     "eslint": "^9.39.2",
     "eslint-plugin-html": "^6.2.0",
-    "eslint-plugin-vue": "^10.6.2",
+    "eslint-plugin-vue": "^10.9.1",
     "vite": "^2.9.15"
   }
 }
